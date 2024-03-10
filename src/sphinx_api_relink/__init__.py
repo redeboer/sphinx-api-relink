@@ -62,6 +62,7 @@ def set_linkcode_resolve(app: Sphinx, _: BuildEnvironment) -> None:
 
 
 def generate_apidoc(app: Sphinx, _: BuildEnvironment) -> None:
+    _set_markdown_as_rst_suffix(app)
     config_key = "generate_apidoc_package_path"
     package_path: list[str] | str | None = getattr(app.config, config_key, None)
     if package_path is None:
@@ -80,6 +81,13 @@ def generate_apidoc(app: Sphinx, _: BuildEnvironment) -> None:
             excludes=app.config.generate_apidoc_excludes,
             use_compwa_template=app.config.generate_apidoc_use_compwa_template,
         )
+
+
+def _set_markdown_as_rst_suffix(app: Sphinx) -> None:
+    source_suffix: dict | str = getattr(app.config, "source_suffix", {})
+    if isinstance(source_suffix, str):
+        source_suffix = {source_suffix: "restructuredtext"}
+    source_suffix[".rst"] = "markdown"
 
 
 def _run_sphinx_apidoc(
